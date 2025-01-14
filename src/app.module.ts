@@ -6,6 +6,8 @@ import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { ApolloServerPluginLandingPageLocalDefault } from '@apollo/server/plugin/landingPage/default';
 import { ItemsModule } from './items/items.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { UsersModule } from './users/users.module';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -32,6 +34,10 @@ import { TypeOrmModule } from '@nestjs/typeorm';
     }),
 
     ItemsModule,
+
+    UsersModule,
+
+    AuthModule,
   ],
   controllers: [],
   providers: [],
