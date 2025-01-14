@@ -32,8 +32,12 @@ export class UsersService {
     return [];
   }
 
-  findOne(id: number): Promise<User> {
-    throw new Error('Method not implemented.');
+  async findOneByEmail(email: string): Promise<User> {
+    try {
+      return await this.userRepository.findOneByOrFail({ email });
+    } catch (error) {
+      this.handleDBError(error);
+    }
   }
 
   block(id: number): Promise<User> {
