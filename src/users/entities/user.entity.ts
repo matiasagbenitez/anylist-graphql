@@ -7,7 +7,7 @@ export class User {
 
   @PrimaryGeneratedColumn('increment')
   @Field(() => Int)
-  id: string;
+  id: number;
 
   @Column()
   @Field(() => String)

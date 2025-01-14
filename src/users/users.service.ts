@@ -40,6 +40,14 @@ export class UsersService {
     }
   }
 
+  async findOneById(id: number): Promise<User> {
+    try {
+      return await this.userRepository.findOneByOrFail({ id });
+    } catch (error) {
+      this.handleDBError(error);
+    }
+  }
+
   block(id: number): Promise<User> {
     throw new Error('Method not implemented.');
   }
