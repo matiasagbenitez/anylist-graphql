@@ -1,10 +1,12 @@
 import { InjectRepository } from '@nestjs/typeorm';
-import { BadRequestException, Injectable, InternalServerErrorException, Logger } from '@nestjs/common';
+import { BadRequestException, Injectable, InternalServerErrorException, Logger, createParamDecorator } from '@nestjs/common';
 import { Repository } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 
 import { RegisterInput } from '../auth/dto';
 import { User } from './entities/user.entity';
+import { ValidRoles } from 'src/auth/enums/valid-roles.enum';
+import { UpdateUserInput } from './dto';
 
 @Injectable()
 export class UsersService {
@@ -28,8 +30,12 @@ export class UsersService {
     }
   }
 
-  async findAll(): Promise<User[]> {
-    return [];
+  async findAll(roles: ValidRoles[]): Promise<User[]> {
+    if (roles.length === 0) return await this.userRepository.find();
+
+    return await this.userRepository.createQueryBuilder('user')
+      .where('user.roles @> :roles', { roles })
+      .getMany();
   }
 
   async findOneByEmail(email: string): Promise<User> {
@@ -48,11 +54,21 @@ export class UsersService {
     }
   }
 
-  block(id: number): Promise<User> {
-    throw new Error('Method not implemented.');
+  async block(id: number, blockerUser: User): Promise<User> {
+    const user = await this.findOneById(id);
+    user.isActive = false;
+    user.lastUpdatedBy = blockerUser;
+    return await this.userRepository.save(user);
   }
 
-
+  async update(id: number, updateUserInput: UpdateUserInput, updaterUser: User): Promise<User> {
+    const user = await this.userRepository.preload({
+      id,
+      ...updateUserInput,
+      lastUpdatedBy: updaterUser
+    });
+    return await this.userRepository.save(user);
+  }
 
   private handleDBError(error: any): never {
     if (error.code === '23505') throw new BadRequestException('User already exists');
