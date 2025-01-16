@@ -12,7 +12,7 @@ import { ItemsModule } from '../items/items.module';
   exports: [
 
     // En caso de que se necesite utilizar la entidad o inyectar el repositorio
-    // TypeOrmModule,
+    TypeOrmModule,
 
     // En caso de que se necesite utilizar el servicio
     UsersService
