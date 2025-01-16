@@ -1,12 +1,18 @@
 import { UseGuards } from '@nestjs/common';
 import { Resolver, Query, Mutation, Args, Int, ResolveField, Parent } from '@nestjs/graphql';
+
 import { UsersService } from './users.service';
+import { ItemsService } from '../items/items.service';
+
 import { User } from './entities/user.entity';
+import { Item } from '../items/entities/item.entity';
+
 import { UpdateUserInput, ValidRolesArgs } from './dto';
+import { PaginationArgs, SearchArgs } from '../common/dto';
+
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { CurrentUser } from '../auth/decorators/current-user.decorator';
 import { ValidRoles } from '../auth/enums/valid-roles.enum';
-import { ItemsService } from '../items/items.service';
 
 @Resolver(() => User)
 @UseGuards(JwtAuthGuard)
@@ -58,4 +64,14 @@ export class UsersResolver {
   ): Promise<number> {
     return this.itemsService.countByUser(user);
   }
+  @ResolveField(() => [Item], { name: 'userItems' })
+  async userItems(
+    @CurrentUser([ValidRoles.SUPERUSER]) superUser: User,
+    @Parent() user: User,
+    @Args() paginationArgs: PaginationArgs,
+    @Args() searchArgs: SearchArgs
+  ): Promise<Item[]> {
+    return this.itemsService.findAll(user, paginationArgs, searchArgs);
+  }
+
 }
