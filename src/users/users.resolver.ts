@@ -3,9 +3,11 @@ import { Resolver, Query, Mutation, Args, Int, ResolveField, Parent } from '@nes
 
 import { UsersService } from './users.service';
 import { ItemsService } from '../items/items.service';
+import { ListsService } from '../lists/lists.service';
 
 import { User } from './entities/user.entity';
 import { Item } from '../items/entities/item.entity';
+import { List } from '../lists/entities/list.entity';
 
 import { UpdateUserInput, ValidRolesArgs } from './dto';
 import { PaginationArgs, SearchArgs } from '../common/dto';
@@ -21,6 +23,7 @@ export class UsersResolver {
   constructor(
     private readonly usersService: UsersService,
     private readonly itemsService: ItemsService,
+    private readonly listsService: ListsService,
   ) { }
 
   @Query(() => [User], { name: 'users' })
@@ -64,6 +67,7 @@ export class UsersResolver {
   ): Promise<number> {
     return this.itemsService.countByUser(user);
   }
+
   @ResolveField(() => [Item], { name: 'userItems' })
   async userItems(
     @CurrentUser([ValidRoles.SUPERUSER]) superUser: User,
@@ -72,6 +76,24 @@ export class UsersResolver {
     @Args() searchArgs: SearchArgs
   ): Promise<Item[]> {
     return this.itemsService.findAll(user, paginationArgs, searchArgs);
+  }
+
+  @ResolveField(() => Int, { name: 'listsCount' })
+  async listsCount(
+    @CurrentUser([ValidRoles.SUPERUSER]) superUser: User,
+    @Parent() user: User,
+  ): Promise<number> {
+    return this.listsService.listsCountByUser(user);
+  }
+
+  @ResolveField(() => [List], { name: 'userLists' })
+  async userLists(
+    @CurrentUser([ValidRoles.SUPERUSER]) superUser: User,
+    @Parent() user: User,
+    @Args() paginationArgs: PaginationArgs,
+    @Args() searchArgs: SearchArgs
+  ): Promise<List[]> {
+    return this.listsService.findAll(user, paginationArgs, searchArgs);
   }
 
 }

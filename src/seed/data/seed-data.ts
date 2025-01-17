@@ -1,5 +1,6 @@
 export const SEED_USERS = [
     {
+        id: 1,
         fullName: 'Matías Benítez',
         email: 'matias@correo.com',
         password: '123456',
@@ -7,13 +8,15 @@ export const SEED_USERS = [
         isActive: true
     },
     {
-        fullName: 'Melissa Flores',
+        id: 2,
+        fullName: 'Melissa Flores', 
         email: 'melissa@correo.com',
         password: '123456',
         roles: ['user'],
         isActive: true
     },
     {
+        id: 3,
         fullName: 'Hernando Vallejo',
         email: 'hernando@correo.com',
         password: '123456',
@@ -21,6 +24,18 @@ export const SEED_USERS = [
         isActive: false
     },
 ]
+
+export const SEED_LISTS = [
+    {
+        name: "Supermarket",
+    },
+    {
+        name: "Weekly meals",
+    },
+    {
+        name: "Diet",
+    }
+];
 
 export const SEED_ITEMS = [
     {
